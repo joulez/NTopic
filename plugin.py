@@ -181,6 +181,12 @@ class NTopic(callbacks.Plugin):
         irc.replySuccess()
     bind = wrap(bind, ['validChannel', 'somethingWithoutSpaces'])
 
+    @internationalizeDocstring
+    def stats(self, irc, msg, args):
+        """Show database stats for NTopic."""
+        irc.replySuccess()
+    stats = wrap(stats)
+
 Class = NTopic
 
 QCheckDB = """

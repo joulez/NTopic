@@ -63,7 +63,10 @@ class NTopicTestCase(ChannelPluginTestCase):
         self.assertError('ntopic bind #test')
         self.assertResponse('ntopic bind #test test', succeed)
 
-    def test08Fail(self):
+    def test09Stats(self):
+        self.assertResponse('ntopic stats', succeed)
+
+    def test10Fail(self):
         self.assertError('ntopic test')
 
 # vim:set shiftwidth=4 tabstop=4 expandtab textwidth=79:
