@@ -1,2 +1,1 @@
-Insert a description of your plugin here, with any notes, etc. about 
-using it.
+NTopic is a multi-purpose topic manager plugin for the Limnoria IRC bot.
