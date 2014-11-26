@@ -41,32 +41,32 @@ class NTopicTestCase(ChannelPluginTestCase):
     def test02Add(self):
         self.assertResponse('ntopic add test "this is a test"', succeed)
 
-    def test03Remove(self):
-        self.assertResponse('ntopic remove test',succeed)
+    #def test03Remove(self):
+    #    self.assertResponse('ntopic remove test',succeed)
 
-    def test04Change(self):
-        self.assertResponse('ntopic change test s/this/THIS/', succeed)
+    #def test04Change(self):
+    #    self.assertResponse('ntopic change test s/this/THIS/', succeed)
 
-    def test05Set(self):
-        self.assertResponse('ntopic set test', succeed)
-    
-    def test06Order(self):
-        self.assertResponse('ntopic order test 1', succeed)
+    #def test05Set(self):
+    #    self.assertResponse('ntopic set test', succeed)
+    #
+    #def test06Order(self):
+    #    self.assertResponse('ntopic order test 1', succeed)
 
-    def test07Cycle(self):
-        fail = 'Error: --fail is not a valid option for command \"ntopic cycle\"'
-        self.assertResponse('ntopic cycle', succeed)
-        self.assertResponse('ntopic cycle --reverse', succeed)
-        self.assertResponse('ntopic cycle --fail', fail)
+    #def test07Cycle(self):
+    #    fail = 'Error: --fail is not a valid option for command \"ntopic cycle\"'
+    #    self.assertResponse('ntopic cycle', succeed)
+    #    self.assertResponse('ntopic cycle --reverse', succeed)
+    #    self.assertResponse('ntopic cycle --fail', fail)
 
-    def test08Bind(self):
-        self.assertError('ntopic bind #test')
-        self.assertResponse('ntopic bind #test test', succeed)
+    #def test08Bind(self):
+    #    self.assertError('ntopic bind #test')
+    #    self.assertResponse('ntopic bind #test test', succeed)
 
-    def test09Stats(self):
-        self.assertResponse('ntopic stats', succeed)
+    #def test09Stats(self):
+    #    self.assertResponse('ntopic stats', succeed)
 
-    def test10Fail(self):
-        self.assertError('ntopic test')
+    #def test10Fail(self):
+    #    self.assertError('ntopic test')
 
 # vim:set shiftwidth=4 tabstop=4 expandtab textwidth=79:

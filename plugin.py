@@ -47,6 +47,8 @@ except ImportError:
 import os
 import sqlite3
 import sys
+from .local.queries import *
+from .local.database import *
 
 
 def checkDirection(irc, msg, args, state):
@@ -78,7 +80,7 @@ class NTopic(callbacks.Plugin):
         self.connectDB(self.DBFilename)
 
     def connectDB(self, filename):
-        conn = sqlite3.connect(filename)
+        conn = sqlite3.connect(filename, isolation_level='DEFERRED')
         if sys.version_info[0] < 3:
             conn.text_factory = str
         cursor = conn.cursor()
@@ -97,8 +99,7 @@ class NTopic(callbacks.Plugin):
 
     @staticmethod
     def initDB(cursor):
-        cursor.execute(QUpdate)
-        cursor.execute(QFillCache)
+        cursor.execute(QUpdateDB)
 
     def getGroupID(self, name):
         if not self.conn:
@@ -121,7 +122,13 @@ class NTopic(callbacks.Plugin):
         text. <channel> is only necessary if the message isn't sent within
         the channel itself.
         """
-        irc.replySuccess()
+        r = DBAddTopic(self.conn, msg.prefix, channel, name, text)
+        if r[0] is False:
+            raise irc.error(format('%s: Topic with id \"%s\" already exists.'\
+                    ' To set it to the current topic use the \"set\"'\
+                    ' command.',r[2],r[1]))
+        else:
+            irc.replySuccess()
     add = wrap(add, ['canChangeTopic', 'somethingWithoutSpaces', 'text'])
     
     @internationalizeDocstring
@@ -188,72 +195,5 @@ class NTopic(callbacks.Plugin):
     stats = wrap(stats)
 
 Class = NTopic
-
-QCheckDB = """
-SELECT last_access FROM config LIMIT 1;
-"""
-QUpdate = """
-UPDATE config SET last_access = datetime('NOW');
-"""
-
-QFillCache = """
-SELECT 1;
-"""
-
-QSchema = ["""
-CREATE TABLE groups (
-    id INTEGER PRIMARY KEY,
-    name TEXT UNIQUE NOT NULL
-    );
-""","""
-CREATE INDEX groups_idx ON groups(name);
-""","""
-CREATE TABLE channels (
-    id INTEGER PRIMARY KEY,
-    name TEXT UNIQUE NOT NULL
-    );
-""","""
-CREATE INDEX channels_idx ON channels(name);
-""","""
-CREATE TABLE topics (
-    id INTEGER PRIMARY KEY,
-    text TEXT NOT NULL
-    );
-""","""
-CREATE TABLE group_topics (
-    id INTEGER PRIMARY KEY,
-    group_id INTEGER NOT NULL REFERENCES groups,
-    topic_id INTEGER NOT NULL REFERENCES topics
-    );
-""","""
-CREATE TABLE group_channels (
-    id INTEGER PRIMARY KEY,
-    group_id INTEGER NOT NULL REFERENCES groups,
-    channel_id INTEGER NOT NULL REFERENCES channels
-    );
-""","""
-CREATE TABLE channel_topics (
-    group_channel_id INTEGER NOT NULL REFERENCES group_channels,
-    group_topic_id INTEGER NOT NULL REFERENCES group_topics,
-    topic_order REAL NOT NULL
-    );
-""","""
-CREATE TABLE cache (
-    ts TEXT NOT NULL,
-    channel TEXT NOT NULL,
-    topic_group TEXT NOT NULL,
-    topic TEXT NOT NULL
-    );
-""","""
-CREATE TABLE config (
-    last_access TEXT NOT NULL,
-    channel_count INT NOT NULL,
-    group_count INT NOT NULL,
-    topic_count INT NOT NULL
-    );
-""","""
-INSERT INTO config VALUES (datetime('NOW'), 0, 0, 0);
-"""]
-
 
 # vim:set shiftwidth=4 softtabstop=4 expandtab textwidth=79:
