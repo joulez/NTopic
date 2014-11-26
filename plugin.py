@@ -124,9 +124,10 @@ class NTopic(callbacks.Plugin):
         """
         r = DBAddTopic(self.conn, msg.prefix, channel, name, text)
         if r[0] is False:
-            raise irc.error(format('%s: Topic with id \"%s\" already exists.'\
+            if r[2] == 'EXISTS':
+                raise irc.error(format('Topic with id \"%s\" already exists.'\
                     ' To set it to the current topic use the \"set\"'\
-                    ' command.',r[2],r[1]))
+                    ' command.',r[1]))
         else:
             irc.replySuccess()
     add = wrap(add, ['canChangeTopic', 'somethingWithoutSpaces', 'text'])

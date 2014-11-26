@@ -41,11 +41,11 @@ INSERT INTO topic_id_logs (topic_id_id, topic_log_id, user_id) VALUES (?, ?, ?);
 """
 
 QGetTopicChannelID = """
-SELECT id FROM topic_channels WHERE topic_id_log_id = ? AND channel_id = ?;
+SELECT id FROM topic_channels WHERE topic_id = ? AND channel_id = ?;
 """
 
 QSetTopicChannel = """
-INSERT INTO topic_channels (topic_id_log_id, channel_id) VALUES (?, ?);
+INSERT INTO topic_channels (topic_id, channel_id) VALUES (?, ?);
 """
 
 QCheckDB = """

@@ -12,8 +12,8 @@ def DBAddTopic(conn, user, channel, topicID, topic):
             (topicID, userID, topicLogID)))[1][0]
     topicIDLogID = getSetValue(conn, (QGetTopicIDLogID, (topicIDID, topicLogID,
         userID)), (QSetTopicIDLog, (topicIDID, topicLogID, userID)))[1][0]
-    topicChannelID = getSetValue(conn, (QGetTopicChannelID, (topicIDLogID,
-        channelID)), (QSetTopicChannel, (topicIDLogID, channelID)))
+    topicChannelID = getSetValue(conn, (QGetTopicChannelID, (topicID,
+        channelID)), (QSetTopicChannel, (topicID, channelID)))
 
     if topicChannelID[0] == True:
         return (False, topicChannelID[1][0], 'EXISTS')
