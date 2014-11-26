@@ -48,6 +48,11 @@ QSetTopicChannel = """
 INSERT INTO topic_channels (topic_id, channel_id) VALUES (?, ?);
 """
 
+#DELETERS
+QDelChannelTopic = """
+DELETE FROM topic_channels WHERE topic_id = ? AND channel_id = ?;
+"""
+
 QCheckDB = """
 SELECT last_access FROM config LIMIT 1;
 """

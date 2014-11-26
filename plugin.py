@@ -122,7 +122,7 @@ class NTopic(callbacks.Plugin):
         text. <channel> is only necessary if the message isn't sent within
         the channel itself.
         """
-        r = DBAddTopic(self.conn, msg.prefix, channel, name, text)
+        r = DBAddChannelTopic(self.conn, msg.prefix, channel, name, text)
         if r[0] is False:
             if r[2] == 'EXISTS':
                 raise irc.error(format('Topic with id \"%s\" already exists.'\
@@ -139,6 +139,7 @@ class NTopic(callbacks.Plugin):
         necessary if the message isn't sent within the channel itself.
 
         """
+        DBRemoveChannelTopic(self.conn, msg.prefix, channel, name)
         irc.replySuccess()
     remove = wrap(remove, ['canChangeTopic', 'somethingWithoutSpaces'])
     

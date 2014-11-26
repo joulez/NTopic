@@ -40,6 +40,7 @@ class NTopicTestCase(ChannelPluginTestCase):
 
     def test02Add(self):
         self.assertResponse('ntopic add test "this is a test"', succeed)
+        self.assertResponse('ntopic remove test', succeed)
 
     #def test03Remove(self):
     #    self.assertResponse('ntopic remove test',succeed)

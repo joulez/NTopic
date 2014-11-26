@@ -2,7 +2,7 @@ from queries import *
 from exceptions import *
 import sqlite3
 
-def DBAddTopic(conn, user, channel, topicID, topic):
+def DBAddChannelTopic(conn, user, channel, topicID, topic):
     userID = getSetValue(conn, (QGetUserID, (user,)), (QSetUser, (user,)))[1][0]
     channelID = getSetValue(conn, (QGetChannelID, (channel,)), (QSetChannel,
             (channel, userID)))[1][0]
@@ -19,17 +19,18 @@ def DBAddTopic(conn, user, channel, topicID, topic):
         return (False, topicChannelID[1][0], 'EXISTS')
     return (True, topicChannelID[1][0], None)
 
-def DBRemoveTopic(conn, user, channel, topicID):
+def DBRemoveChannelTopic(conn, user, channel, topicID):
     userID = getSetValue(conn, (QGetUserID, (user,)), (QSetUser, (user,)))[1][0]
     channelID = getValue(conn, (QGetChannelID, (channel,)))
     if not channelID:
         raise ValueError(format('No topics registered with channel \"%s\"',
             channel))
-    channelID = channelID[0][1]
+    channelID = channelID[0]
     topicIDID = getValue(conn, (QGetTopicID, (topicID,)))
     if not topicIDID:
         raise ValueError(format('Topic ID \"%s\" doesn\'t exist.', topicID))
-    topicIDID = topicIDID[0][1]
+    topicIDID = topicIDID[0]
+    setValue(conn, (QDelChannelTopic, (topicIDID, channelID)))
 
 def getSetValue(conn, getQuery, setQuery, exists=True):
     """Getter/Setter function. Attempts to avoid concurrency issues. 
