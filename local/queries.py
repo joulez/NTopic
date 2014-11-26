@@ -22,12 +22,12 @@ QSetTopic = """
 INSERT INTO topic_ids (value, user_id, current_topic_id) VALUES (?, ?, ?);
 """
 
-QGetTopicLogID = """
-SELECT id FROM topic_logs WHERE value = ?;
+QGetTopicListID = """
+SELECT id FROM topic_list WHERE value = ?;
 """
 
-QSetTopicLog = """
-INSERT INTO topic_logs (value, user_id) VALUES (?, ?);
+QSetTopicList = """
+INSERT INTO topic_list (value, user_id) VALUES (?, ?);
 """
 
 QGetTopicIDLogID = """
@@ -72,7 +72,7 @@ CREATE TABLE topic_ids (
     ts TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     value TEXT UNIQUE NOT NULL,
     user_id INTEGER NOT NULL REFERENCES users,
-    current_topic_id INTEGER NOT NULL REFERENCES topic_logs DEFERRABLE INITIALLY DEFERRED
+    current_topic_id INTEGER NOT NULL REFERENCES topic_list DEFERRABLE INITIALLY DEFERRED
     );
 ""","""
 CREATE INDEX topic_ids_user_idx ON topic_ids(user_id);
@@ -86,20 +86,20 @@ CREATE TABLE channels (
 ""","""
 CREATE INDEX channels_user_idx ON channels(user_id);
 ""","""
-CREATE TABLE topic_logs (
+CREATE TABLE topic_list (
     id INTEGER PRIMARY KEY,
     ts TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     value TEXT NOT NULL,
     user_id INTEGER NOT NULL REFERENCES users
     );
 ""","""
-CREATE INDEX topics_user_idx ON topic_logs(user_id);
+CREATE INDEX topics_user_idx ON topic_list(user_id);
 ""","""
 CREATE TABLE topic_id_logs (
     id INTEGER PRIMARY KEY,
     ts TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     topic_id_id INTEGER NOT NULL REFERENCES topic_ids,
-    topic_log_id INTEGER NOT NULL REFERENCES topic_logs,
+    topic_log_id INTEGER NOT NULL REFERENCES topic_list,
     user_id INTEGER NOT NULL REFERENCES users,
     UNIQUE (topic_id_id, topic_log_id, user_id)
     );
@@ -113,26 +113,13 @@ CREATE INDEX topic_id_logs_user_idx ON topic_id_logs(user_id);
 CREATE TABLE topic_channels (
     id INTEGER PRIMARY KEY,
     ts TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    topic_id_log_id INTEGER NOT NULL REFERENCES topic_id_logs,
+    topic_id INTEGER NOT NULL REFERENCES topic_ids,
     channel_id INTEGER NOT NULL REFERENCES channels
     );
 ""","""
-CREATE INDEX topic_channels_topic_id_log_idx ON topic_channels(topic_id_log_id);
+CREATE INDEX topic_channels_topic_idx ON topic_channels(topic_id);
 ""","""
 CREATE INDEX topic_channels_channel_idx ON topic_channels(channel_id);
-""","""
-CREATE TABLE channel_topics (
-    topic_channel_id INTEGER NOT NULL REFERENCES topic_channels,
-    topic_id_log_id INTEGER NOT NULL REFERENCES topic_id_logs,
-    topic_order REAL NOT NULL,
-    PRIMARY KEY (topic_channel_id, topic_id_log_id)
-    ) WITHOUT ROWID;
-""","""
-CREATE INDEX channel_topics_topic_channel_idx ON channel_topics(topic_channel_id);
-""","""
-CREATE INDEX channel_topics_topic_id_log_idx ON channel_topics(topic_id_log_id);
-""","""
-CREATE INDEX channel_topics_order_idx ON channel_topics(topic_id_log_id DESC);
 ""","""
 CREATE TABLE cache (
     ts TEXT NOT NULL,
